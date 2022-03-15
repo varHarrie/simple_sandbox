@@ -20,8 +20,13 @@ export class ScriptWorker extends EventTarget {
     this.#worker.addEventListener("message", (e) => {
       const payload = (e as MessageEvent).data;
 
-      if (payload.type === "result") {
-        this.#handleResolve(payload.data);
+      switch (payload.type) {
+        case "resolve":
+          this.#handleResolve(payload.data);
+          break;
+        case "reject":
+          this.#handleReject(new Error(payload.data));
+          break;
       }
     });
 

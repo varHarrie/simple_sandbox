@@ -24,8 +24,14 @@ self.addEventListener("message", async (e) => {
 
   if (payload.type === "execute") {
     const { code, args } = payload.data;
-    const data = await execute(code, args);
-    self.postMessage({ type: "result", data });
+
+    try {
+      const data = await execute(code, args);
+      self.postMessage({ type: "resolve", data });
+    } catch (error) {
+      const data = error instanceof Error ? error.message : "Unknown Error";
+      self.postMessage({ type: "reject", data });
+    }
   }
 });
 
